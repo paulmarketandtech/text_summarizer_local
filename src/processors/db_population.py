@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from sqlalchemy import update
@@ -11,6 +12,8 @@ from src.storage.models import (
     Video,
 )
 from src.storage.vector_db import VectorDBManager
+
+logger = logging.getLogger(__name__)
 
 
 def db_population_manager(
@@ -40,6 +43,8 @@ def db_population_manager(
                 transcript_word_count=yt_metadata.get("transcript_word_count"),
             )
             session.add(video)
+
+        logger.info("Video model added")
 
         vector_chunk_ids = []
         vector_chunk_texts = []
@@ -74,6 +79,8 @@ def db_population_manager(
             metadatas=vector_chunk_metadas,
         )
 
+        logger.info("chunks db and vectors added")
+
         for llm_chunk in llm_chunks_metadata:
             video.llm_chunks.append(
                 LLMChunkMetaData(
@@ -93,6 +100,8 @@ def db_population_manager(
         vector_stock_ids = []
         vector_stock_texts = []
         vector_stock_metadas = []
+
+        logger.info("LLM chunks db and vectors added")
 
         for llm_stock in llm_stocks_metadata:
             video.stockSummaries.append(
@@ -129,6 +138,8 @@ def db_population_manager(
                 metadatas=vector_stock_metadas,
             )
 
+        logger.info("single stock summary and vectors added")
+
         new_summary = Summary(
             final_report=final_report_metadata["final_report"],
             char_count=final_report_metadata["char_count"],
@@ -148,8 +159,10 @@ def db_population_manager(
                 }
             ],
         )
+        logger.info("whole video summary and vectors added")
 
         session.commit()
+        logger.info("DB commited")
 
 
 def update_full_processing_time(duration: float, yt_id: str) -> None:

@@ -29,7 +29,7 @@ class ProcessingService:
 
         try:
             logger.info("Starting processing for URL: %s", url)
-            logger.debug("Step 1: Processing YouTube transcript")
+            logger.info("Step 1: Processing YouTube transcript")
             # ========== STEP 1: Processing Transcript ==========
             transcript_pipeline = TranscriptPipeline()
             pipeline_result = transcript_pipeline.common_part_of_pipeline(
@@ -37,7 +37,7 @@ class ProcessingService:
             )
 
             # ========== STEP 2: Save to database ==========
-            logger.debug("Step 2: Saving to database")
+            logger.info("Step 2: Saving to database")
             db_population.db_population_manager(
                 pipeline_result.yt_metadata,
                 pipeline_result.chunks,
